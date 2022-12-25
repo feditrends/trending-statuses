@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>feditrends - trending statuses</title>
+  <meta name="description" content="Aggregrating the latest trending statuses from across the fediverse.">
+  <meta http-equiv="cleartype" content="on">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <link rel="image_src" href="/static/logo.png" />
+  <link rel="shortcut icon" href="/static/logo.png">
+  <link rel="stylesheet" href="/static/bootstrap-icons.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+      html, body {
+        font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+          background-color: #FFFFFF;
+          color: #333333;
+          }
+
+      .container {
+        max-width: 600px;
+        width: 100%;
+        margin: auto;
+        text-align: center;
+      }
+
+      h1 {
+        font-family: Menlo, Consolas, Monaco, Liberation Mono, Lucida Console, monospace;
+        color: #777777;
+      }
+
+      .logo {
+        width: 64px;
+        margin-top: 20px;
+      }
+
+      .blue {
+        color: #5B9EE2;
+      }
+
+      h3 {
+        font-weight: 300;
+      }
+
+      .statuses {
+        margin-top: 40px;
+        text-align: left;
+      }
+
+      .status {
+        padding: 1rem;
+        /*background-color: #f5f5f5;*/
+        color: #333;
+        margin: 0 0 1rem 0;
+        text-align: left;
+        border-radius: 1px;
+        border: 1px solid #f1f1f1;
+      }
+
+      .header {
+        display: flex;
+      }
+
+      .button {
+        text-decoration: none;
+        color: #777777;
+        font-size: 16px;
+        font-weight: 300;
+      }
+
+      .button:hover {
+        color: #5B9EE2;
+      }
+
+      .rss, .json {
+        display: inline-block;
+      }
+
+      .json {
+        margin-left: 20px;
+      }
+
+      .rss > a, .json > a {
+        display: flex;
+        align-items: center;
+      }
+
+      .statuses a {
+        text-decoration: none;
+      }
+
+      .avatar {
+        flex-shrink: 0;
+      }
+
+      .avatar img {
+        width: 46px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+
+      .details {
+        flex-grow: 1;
+        margin-left: 10px;
+      }
+
+      .name {
+        float: left;
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 22px;
+        color: #333333;
+      }
+
+      .name a {
+        color: #333333;
+        text-decoration: none;
+      }
+
+      .name a:hover {
+        color: #333333;
+      }
+
+      .timestamp {
+        float: right;
+        font-size: 15px;
+        font-weight: 400;
+        color: #999999;
+        text-decoration: none;
+      }
+
+      .timestamp a {
+        color: #999999;
+      }
+
+      .timestamp a:hover {
+        color: #999999;
+        text-decoration: underline;
+      }
+
+      .url {
+        font-size: 15px;
+        color: #999999;
+        font-weight: 400;
+        line-height: 22px;
+      }
+
+      .url a {
+        color: #999999;
+        text-decratione: none;
+      }
+
+      .url a:hover {
+        color: #999999;
+      }
+
+      .header-row::after {
+          display: block;
+          clear: both;
+          content: "";
+      }
+
+      .body {
+        font-size: 15px;
+        font-weight: 400;
+        word-break: break-word;
+      }
+
+      .invisible {
+        display: none;
+      }
+
+      .ellipsis::after {
+          content: "…";
+      }
+
+      a {
+        color: #0d6efd;
+      }
+
+      a:hover {
+        color: #0a58ca;
+      }
+
+      .ml-1 {
+        margin-left: 1rem;
+      }
+
+      .footer {
+        font-size: 13px;
+        color: #999999;
+      }
+
+      .card {
+        border-radius: 3px;
+        border: 1px solid #f1f1f1;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .card > div {
+        flex: 1;
+        padding: 0.5rem;
+        overflow: hidden;
+      }
+
+      .card img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 3px 0px 0px 3px;
+      }
+
+      .card > i {
+        width: 60px;
+          height: 60px;
+          text-align: center;
+          font-size: 24px;
+          line-height: 60px;
+          color: #777;
+          background-color: #f1f1f1;
+          border-radius: 3px 0px 0px 3px;
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: block;
+          color: #333333;
+      }
+
+      .card-title:hover {
+        color: #333333;
+      }
+
+      .card-provider {
+        font-size: 13px;
+        font-weight: 400;
+        display: block;
+        color: #999999;
+        margin-top: 5px;
+        white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+      }
+
+      .attachments {
+        box-sizing: border-box;
+        margin-bottom: 1rem;
+        border-radius: 3px;
+        border: 1px solid #FFFFFF;
+        height: 300px;
+        width: 100%;
+      }
+
+      .attachments img {
+        float: left;
+        object-fit: cover;
+        box-sizing: border-box;
+      }
+
+      .attachments-1 img {
+        width: 100%;
+        height: 100%;
+      }
+
+      .attachments-2 img {
+        width: 50%;
+        height: 100%;
+      }
+
+      .attachments-3 img {
+        width: 50%;
+        height: 50%;
+      }
+
+      .attachments-3 img:first-child {
+        width: 50%;
+        height: 100%;
+      }
+
+      .attachments-4 img {
+        width: 50%;
+        height: 50%;
+      }
+
+    input {
+      font-family: inherit;
+      font-size: .8rem;
+      display: inline-block;
+      width: 24%;
+      height: 2rem;
+      padding: .25rem;
+      margin-bottom: 1rem;
+      margin-right: 1%;
+      border: 1px solid #CCC;
+      border-radius: 3px;
+      box-sizing: border-box;
+      float: left;
+    }
+
+    select {
+      font-family: inherit;
+      font-size: 0.8rem;
+      display: inline-block;
+      width: 24%;
+      height: 2rem;
+      padding: .25rem;
+      margin-bottom: 1rem;
+      margin-right: 1%;
+      border: 1px solid #CCC;
+      border-radius: 3px;
+      box-sizing: border-box;
+      float: left;
+    }
+
+    .lightbox {
+      /* Default to hidden */
+      display: none;
+
+      /* Overlay entire screen */
+      position: fixed;
+      z-index: 999;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      
+      /* A bit of padding around image */
+      padding: 1rem;
+
+      /* Translucent background */
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .lightbox span {
+      /* Full width and height */
+      display: block;
+      width: 100%;
+      height: 100%;
+
+      /* Size and position background image */
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+
+    .lightbox-show {
+      display: block;
+    }
+
+    </style>
+</head>
+<body>
+  <div class="container">
+    <img src="/static/logo.png" class="logo"/>
+    <h1>fedi<span class="blue">trends</span></h1>
+    <h3>a filterable feed of statuses trending across the fediverse.</h3>
+
+    <div class="filters">
+
+        <form id="filterForm">
+            <select name="hours" id="hours">
+                <option value="1">Last hour</option>
+                <option value="3" selected>Last 3 hours</option>
+                <option value="6">Last 6 hours</option>
+                <option value="12">Last 12 hours</option>
+                <option value="24">Last 24 hours</option>
+            </select>
+
+            <select name="order" id="order">
+                <option value="pop" selected>Popularity</option>
+                <option value="chrono">Latest</option>
+            </select>
+
+            <input type="text" id="query" name="query" pattern="[A-Za-z0-9\S]{1,25}" placeholder="Keyword...">
+
+            <input class="submit" type="submit" value="Filter">
+        </form>
+
+    </div>
+
+    <div class="statuses">
+      <h2>Trending Now</h2>
+    </div>
+  </div>
+
+<div class="lightbox" onClick="hideLightbox()">
+  <span style="background-image: url('https://picsum.photos/seed/9/900/450')"></span>
+</div>
+
+<script type="text/template" id="statusTemplate">
+      {% for status in statuses -%}
+      <div class="status">
+        <div class="header">
+          <div class="avatar">
+            <a href="{{ status.account.url }}"><img src="{{ status.account.avatar_static }}" alt="" loading="lazy"></a>
+          </div>
+          <div class="details">
+            <div class="header-row">
+              <div class="name"><a href="{{ status.account.url }}">{{ status.account.display_name }}</a></div>
+              <div class="timestamp"><a href="{{ status.url }}">{{ status.created_at | timeago }}</a></div>
+            </div>
+            <div class="url"><a href="{{ status.account.url }}">{{ status.account.url | remove_first: "https://" }}</a></div>
+          </div>
+        </div>
+        <div class="body">
+            {{ status.content | safe }}
+            {% if status.card.size > 0 and status.media_attachments.size <= 0 %}
+            <div class="card">
+              {% if status.card.image.size > 0 %}
+              <a href="{{ status.card.url }}"><img src="{{ status.card.image }}" alt="" loading="lazy"></a>
+              {% else %}
+              <i class="bi bi-link-45deg"></i>
+              {% endif %}
+            <div>
+              <a href="{{ status.card.url }}" class="card-title">{{ status.card.title }}</a>
+              <span class="card-provider">{{ status.card.url | domain | upcase }}</span>
+            </div>
+          </div>
+          {% endif %}
+          {% if status.media_attachments.size > 0 %}
+          <div class="attachments attachments-{{ status.media_attachments.size }}">
+          {% for attachment in status.media_attachments %}
+            <img src="{{ attachment.preview_url }}" alt="{{ attachment.description | strip_newlines | strip }}" loading="lazy" onClick="showLightbox('{{ attachment.url }}')" />
+          {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        <div class="footer">
+          <span><i class="bi bi-reply-fill"></i> {{ status.replies_count }}</span>
+          <span><i class="bi bi-repeat ml-1"></i> {{ status.reblogs_count }}</span>
+          <span><i class="bi bi-star-fill ml-1"></i> {{ status.favourites_count }}</span>
+        </div>
+      </div>
+      {% endfor -%}
+</script>
+
+<script src="/static/liquid.browser.min.js"></script>
+<script>
+
+// Helper: "Time since" calculation (borrowed from: https://gist.github.com/patrickmooney/7060259d11ac6281ce1c)
+function timeSince(timeStamp) {
+    timeStamp = new Date(timeStamp);
+    var now = new Date(),
+        secondsPast = (now.getTime() - timeStamp.getTime()) / 1000;
+    if(secondsPast < 60){
+        return parseInt(secondsPast) + 's';
+    }
+    if(secondsPast < 3600){
+        return parseInt(secondsPast/60) + 'm';
+    }
+    if(secondsPast <= 86400){
+        return parseInt(secondsPast/3600) + 'h';
+    }
+    if(secondsPast > 86400){
+        day = timeStamp.getDate();
+        month = timeStamp.toDateString().match(/ [a-zA-Z]*/)[0].replace(" ","");
+        year = timeStamp.getFullYear() == now.getFullYear() ? "" :  " "+timeStamp.getFullYear();
+        return day + " " + month + year;
+    }
+}
+
+// Helper: Get query string parameter (borrowed from https://davidwalsh.name/query-string-javascript)
+function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+};
+
+// Helper: Improved error handling for fetch() (borrowed from: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/)
+function handleErrors(response) {
+    if (!response.ok) {
+        throw Error(response.statusText);
+    }
+    return response;
+}
+
+// Setup Liquid JS
+const template = document.querySelector('#statusTemplate');
+const statusesContainer = document.querySelector('.statuses');
+const engine = new liquidjs.Liquid();
+
+engine.registerFilter('domain', v => new URL(v).hostname.replace('www.',''));
+engine.registerFilter('timeago', v => timeSince(v));
+
+// Render the status timeline
+function renderStatuses(statuses) {
+    engine
+      .parseAndRender(template.innerHTML, {statuses: statuses})
+      .then(html => statusesContainer.innerHTML += html)
+}
+
+// When page is loaded, try and grab JSON
+window.addEventListener('load', function(event) {
+
+    // Construct URL and set select/input values based on query parameters
+    var hours = getUrlParameter('hours') ? getUrlParameter('hours') : "3";
+    var order = getUrlParameter('order') ? getUrlParameter('order') : "pop";
+    var query = getUrlParameter('query') ? getUrlParameter('query') : "";
+
+    url = "/api?hours=" + hours + "&order=" + order;
+
+    document.querySelector('#hours').value = hours;
+    document.querySelector('#order').value = order;
+
+    if (query != "")
+    {
+        url = url += "&query=" + query;
+        document.querySelector('#query').value = query;
+    }
+
+    // Fetch the JSON from the API and trigger render if successful, otherwise catch errors
+    fetch(url)
+        .then(handleErrors)
+        .then(response => response.json())
+        .then(result => renderStatuses(result))
+        .catch(error => console.log(error));
+
+});
+
+function showLightbox(url) {
+  document.querySelector('.lightbox span').style.backgroundImage = "url('" + url + "')";
+  document.querySelector('.lightbox').classList.add('lightbox-show');
+}
+
+function hideLightbox() {
+  document.querySelector('.lightbox').classList.remove('lightbox-show');  
+}
+
+document.onkeyup = function(e) {
+    if(e.key === "Escape") {
+        hideLightbox();
+    }
+}
+
+</script>
+
+</body>
+</html>

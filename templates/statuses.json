@@ -1,0 +1,5 @@
+[
+{% for status in statuses %}
+	{{ status.status_json }}{% if not loop.last %},{% endif %}
+{% endfor %}
+]
