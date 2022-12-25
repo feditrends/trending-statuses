@@ -35,7 +35,7 @@ You can then navigate to the URL returned in your terminal (eg. [http://127.0.0.
 In production, you'll want to put this Flask app behind a WSGI server such as Gunicorn or Waitress. For more details, [visit the Flask docs.](https://flask.palletsprojects.com/en/2.2.x/deploying/)
 
 ## The MIT License (MIT)
-Copyright (c) 2022 Jackson Palmer
+Copyright (c) 2022 feditrends
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
